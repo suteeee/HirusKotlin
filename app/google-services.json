@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "359866047615",
+    "project_id": "hirus-7c421",
+    "storage_bucket": "hirus-7c421.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:359866047615:android:89a4329484256ab4f1334a",
+        "android_client_info": {
+          "package_name": "com.kt.hiruskotlin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "359866047615-uj1n1tidd1grucu0sbs4m6en1e2rn6tn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjLcV6E7tkj92lPphwS3CUtdDMi4ChJf8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "359866047615-uj1n1tidd1grucu0sbs4m6en1e2rn6tn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
