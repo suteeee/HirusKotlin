@@ -45,7 +45,7 @@ class LoadingActivity : AppCompatActivity() {
     /*
     * 로그인 안했을때는 안넘어가지게 구현해야함
     * 최초 로그인 이후엔 이화면 스킵
-    * */
+    */
 
     private fun logIn(userId: String, passWord: String) {
         class User {
