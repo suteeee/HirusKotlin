@@ -19,33 +19,33 @@
         app:layout_constraintTop_toBottomOf="@id/toolbar">
 
         <TextView
-            android:id="@+id/current"
+            android:id="@+id/current_tv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="현재 위치"
             android:textColor="#000000"
             android:textSize="24dp"
-            app:layout_constraintBottom_toTopOf="@id/toolbar_title"
+            app:layout_constraintBottom_toTopOf="@id/location_tv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/toolbar_title"
+            android:id="@+id/location_tv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="TextView"
             android:textColor="#000000"
             android:textSize="18dp"
-            app:layout_constraintBottom_toTopOf="@id/BestDesease"
+            app:layout_constraintBottom_toTopOf="@id/BestDisease_tv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/current" />
+            app:layout_constraintTop_toBottomOf="@id/current_tv" />
 
         <TextView
-            android:id="@+id/Human3"
+            android:id="@+id/Human3_tv"
             android:layout_width="0dp"
             android:layout_height="0dp"
 
@@ -55,12 +55,12 @@
             android:textColor="#000000"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/Human2"
-            app:layout_constraintTop_toBottomOf="@id/BestDesease"
+            app:layout_constraintStart_toEndOf="@id/Human2_tv"
+            app:layout_constraintTop_toBottomOf="@id/BestDisease_tv"
             app:layout_constraintVertical_weight="1" />
 
         <TextView
-            android:id="@+id/Human2"
+            android:id="@+id/Human2_tv"
             android:layout_width="0dp"
             android:layout_height="0dp"
 
@@ -69,13 +69,13 @@
             android:text="오류"
             android:textColor="#000000"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/Human3"
+            app:layout_constraintEnd_toStartOf="@id/Human3_tv"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/BestDesease"
+            app:layout_constraintTop_toBottomOf="@id/BestDisease_tv"
             app:layout_constraintVertical_weight="1" />
 
         <TextView
-            android:id="@+id/BestDesease"
+            android:id="@+id/BestDisease_tv"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:fontFamily="sans-serif"
@@ -83,34 +83,34 @@
             android:text="오류"
             android:textColor="#000000"
             android:textSize="40sp"
-            app:layout_constraintBottom_toTopOf="@id/Human2"
+            app:layout_constraintBottom_toTopOf="@id/Human2_tv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar_title"
+            app:layout_constraintTop_toBottomOf="@id/location_tv"
             app:layout_constraintVertical_weight="4" />
 
         <ImageView
-            android:id="@+id/faces"
+            android:id="@+id/faces_iv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@id/BestDesease"
+            app:layout_constraintBottom_toBottomOf="@id/BestDisease_tv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/BestDesease"
+            app:layout_constraintTop_toTopOf="@id/BestDisease_tv"
             app:srcCompat="@drawable/ssmile" />
 
         <TextView
-            android:id="@+id/patientcnt"
+            android:id="@+id/patientcnt_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="TextView"
             android:textColor="#000000"
             android:textSize="24sp"
-            app:layout_constraintBottom_toBottomOf="@id/BestDesease"
+            app:layout_constraintBottom_toBottomOf="@id/BestDisease_tv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/faces" />
+            app:layout_constraintTop_toBottomOf="@id/faces_iv" />
 
         <Button
             android:id="@+id/able"
@@ -118,10 +118,10 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="409dp"
             android:text="Button"
-            app:layout_constraintBottom_toBottomOf="@+id/BestDesease"
+            app:layout_constraintBottom_toBottomOf="@+id/BestDisease_tv"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/BestDesease"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar_title" />
+            app:layout_constraintStart_toStartOf="@+id/BestDisease_tv"
+            app:layout_constraintTop_toBottomOf="@+id/location_tv" />
 
         <Button
             android:id="@+id/disable"
@@ -130,10 +130,10 @@
             android:layout_marginTop="61dp"
             android:layout_marginBottom="372dp"
             android:text="Button"
-            app:layout_constraintBottom_toBottomOf="@+id/BestDesease"
+            app:layout_constraintBottom_toBottomOf="@+id/BestDisease_tv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/toolbar_title"
+            app:layout_constraintTop_toTopOf="@+id/location_tv"
             app:layout_constraintVertical_bias="0.0" />
 
         <Button
@@ -143,10 +143,20 @@
             android:layout_marginTop="85dp"
             android:layout_marginBottom="23dp"
             android:text="로그아웃"
-            app:layout_constraintBottom_toTopOf="@+id/faces"
+            app:layout_constraintBottom_toTopOf="@+id/faces_iv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/BestDesease" />
+            app:layout_constraintTop_toTopOf="@+id/BestDisease_tv" />
+
+        <Button
+            android:id="@+id/dbup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="db업뎃"
+            app:layout_constraintBottom_toTopOf="@+id/faces_iv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/b3" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

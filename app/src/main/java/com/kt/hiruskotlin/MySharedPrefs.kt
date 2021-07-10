@@ -7,6 +7,7 @@ class MySharedPrefs(context: Context) {
     private val prefsFileName = "prefs"
     private val threadKeyEdt = "states"
     private val logInKeyEdt = "login"
+    private val posKeyEdt = "pos"
     private val idKeyEdt = "id"
 
     private val prefs:SharedPreferences = context.getSharedPreferences(prefsFileName, 0)
@@ -22,5 +23,9 @@ class MySharedPrefs(context: Context) {
     var userId: String?
         get() = prefs.getString(idKeyEdt,"")
         set(value) = prefs.edit().putString(idKeyEdt,value).apply()
+
+    var position: String?
+        get() = prefs.getString(posKeyEdt,"")
+        set(value) = prefs.edit().putString(posKeyEdt,value).apply()
 
 }

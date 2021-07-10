@@ -1,49 +1,65 @@
 package com.kt.hiruskotlin
 
+import android.Manifest
+import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.location.Address
+import android.location.Geocoder
+import android.location.LocationListener
+import android.location.LocationManager
 import android.preference.PreferenceManager
 import android.util.Log
+import androidx.core.app.ActivityCompat
+
+import com.google.firebase.database.DatabaseReference
 import com.kt.hiruskotlin.LoadingActivity.Companion.prefs
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 
 class BackgroundThread : Thread {
+    companion object{
+        var running = false
+    }
+
     lateinit var context: Context
-    //lateinit var  backgroundService: BackgroundService
+    lateinit var  backgroundService: BackgroundService
     lateinit var  serviceIntent: Intent
+    lateinit var db: DatabaseReference
+    var latitude :Double= 0.0
+    var longitude :Double= 0.0
+    lateinit var geocoder: Geocoder
 
-    constructor() {
-    }
-
-    constructor(context: Context, backgroundService: BackgroundService) {
+    constructor(context: Context) {
         this.context = context
-        //this.backgroundService = backgroundService
     }
 
-    fun serviceInit() {
-        //backgroundService = BackgroundService(context)
-        //serviceIntent = Intent(context, backgroundService.javaClass)
-    }
 
     private fun serviceRun() {
-       /*
-       파이어베이스 이용, db에서 값 찾아오기, 등 동작구현
-        */
+        Log.d("SubThread", "Srun")
+        val serviceIntent = Intent(context, backgroundService::class.java)
+        Log.d(context.toString(),serviceIntent.toString())
+        context.startService(serviceIntent)
     }
 
     private fun optionCheck() {
         if (prefs.threadStates == "사용 안함") {
             Log.d("SubThread", "disable")
-            //context.stopService(serviceIntent)
+            if(running) context.stopService(serviceIntent) //서비스 실행중일때만 종료가능
         } else {
             Log.d("SubThread", "able")
-            serviceRun()
+           if(!running) { //서비스 종료상태일때만 실행가능
+               Log.d("SubThread", "start")
+               serviceRun()
+               running = true
+           }
         }
     }
 
     override fun run()= runBlocking<Unit> {
-        serviceInit()
+        backgroundService = BackgroundService()
+
         val setServiceState = GlobalScope.async {
             while(true){
                 Log.d("Thread", "run");
@@ -51,7 +67,6 @@ class BackgroundThread : Thread {
                 optionCheck()
             }
         }
-
         setServiceState.start()
 
     }
