@@ -1,6 +1,9 @@
 package com.kt.hiruskotlin
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.app.ProgressDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
@@ -15,10 +18,15 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_loding.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class LoadingActivity : AppCompatActivity() {
     companion object{
-        lateinit var prefs:MySharedPrefs
+        lateinit var prefs:Model.MySharedPrefs
+        @SuppressLint("StaticFieldLeak")
+        lateinit var context : Context
     }
 
     lateinit var db:DatabaseReference
@@ -97,7 +105,9 @@ class LoadingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_loding)
-        prefs = MySharedPrefs(applicationContext)
+        context = applicationContext
+        Log.d("ddddd","ddddd")
+        prefs = Model.MySharedPrefs(context)
 
         db = FirebaseDatabase.getInstance().reference
 
@@ -123,6 +133,7 @@ class LoadingActivity : AppCompatActivity() {
                 Toast.LENGTH_SHORT
             ).show()
             else logIn(id, pw) //로그인 값 가져오기
+            pwd_et.text = null
         }
 
     }
@@ -133,50 +144,27 @@ class LoadingActivity : AppCompatActivity() {
     */
 
     private fun logIn(userId: String, passWord: String) {
-        class User {
-            val userId = userId
-            val passWord = passWord
-            val lastPosition = ""
-        }
-        val user = User()
-
-        val read = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val post = snapshot.child(userId) // 로그인할때 등록된 이름이 있는지 확인
-                if (post.value == null) { //등록 내역이 없다면
-                    db.child("users").child(userId).setValue(user)
+        ViewModel.logIn(userId,passWord, this)
+        GlobalScope.launch {
+            while(true){
+                if(Model.LogInFinish) {
                     startApp()
-                } else {
-                    val check = post.child("passWord").value.toString()
-                    Log.d(check, "sdf")
-                    if (!check.equals(passWord)) {
-
-                        Toast.makeText(applicationContext, "비밀번호를 잘못 입력하셧습니다.", Toast.LENGTH_SHORT).show()
-                        pwd_et.text = null
-                    } else {
-                        prefs.logInStates = "true" //기기에 유저정보 저장
-                        startApp()
-                    }
-
+                    break
                 }
+                delay(100)
             }
-            override fun onCancelled(error: DatabaseError) {}
         }
-        prefs.userId = userId
-        db.child("users").addValueEventListener(read)
+
     }
 
-    private fun startApp(){
+    fun startApp(){
         val intent = Intent(this, MainActivity::class.java)
-        val bt = BackgroundThread(applicationContext)
-
-        bt.start()
         val b = BackgroundService()
-        val aintent = Intent(applicationContext, b::class.java)
-        applicationContext.startService(aintent)
+        val aintent = Intent(context, b::class.java)
+
+        ViewModel.startApp(intent,aintent,context)
 
         startActivity(intent)
-        Log.d("load", "메인화면")
         finish()
 
     }

@@ -26,10 +26,8 @@ class BackgroundThread : Thread {
     lateinit var context: Context
     lateinit var  backgroundService: BackgroundService
     lateinit var  serviceIntent: Intent
-    lateinit var db: DatabaseReference
-    var latitude :Double= 0.0
-    var longitude :Double= 0.0
-    lateinit var geocoder: Geocoder
+
+
 
     constructor(context: Context) {
         this.context = context
@@ -37,13 +35,12 @@ class BackgroundThread : Thread {
 
 
     private fun serviceRun() {
-        Log.d("SubThread", "Srun")
         val serviceIntent = Intent(context, backgroundService::class.java)
-        Log.d(context.toString(),serviceIntent.toString())
         context.startService(serviceIntent)
     }
 
     private fun optionCheck() {
+        val prefs = Model.MySharedPrefs(context)
         if (prefs.threadStates == "사용 안함") {
             Log.d("SubThread", "disable")
             if(running) context.stopService(serviceIntent) //서비스 실행중일때만 종료가능

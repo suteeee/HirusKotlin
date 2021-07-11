@@ -1,15 +1,14 @@
 package com.kt.hiruskotlin
 
-import android.app.ProgressDialog
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.firebase.database.*
-import kotlinx.android.synthetic.main.activity_loding.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -17,87 +16,96 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     lateinit var db:DatabaseReference
-    lateinit var rd : ReadDB
+    lateinit var rd : Model.ReadDB
     lateinit var _do : String
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         db = FirebaseDatabase.getInstance().reference
-        val prefs = MySharedPrefs(applicationContext)
+        val prefs = Model.MySharedPrefs(applicationContext)
+        rd = Model.ReadDB(this)
 
-        val gpsTrackerService = GpsTrackerService(applicationContext)
-        val latitude = gpsTrackerService.latitude
-        val longitude = gpsTrackerService.longitude
-        val geocoder = Geocoder(applicationContext)
-
-        var list :List<Address>  = geocoder.getFromLocation(latitude, longitude, 10)
-
-        val addr = list.get(0).toString().split(" ")
-
-        _do = addr[1]
-
-        val read = object : ValueEventListener {
-        override fun onDataChange(snapshot: DataSnapshot) {
-            val post = snapshot.child("lastPosition").value.toString()
-            location_tv.text = post
-        }
-
-        override fun onCancelled(error: DatabaseError) {}
-    }
-        rd = ReadDB(this)
-
-
-        db.child("users").child(LoadingActivity.prefs.userId!!).addListenerForSingleValueEvent(read)
-
+        _do = "강원도"//Model.addr[1]
 
         able.setOnClickListener {
-            LoadingActivity.prefs.threadStates = "사용함"
+            prefs.threadStates = "사용함"
         }
 
         disable.setOnClickListener{
-            LoadingActivity.prefs.threadStates = "사용 안함"
+            prefs.threadStates = "사용 안함"
         }
 
         b3.setOnClickListener{
-            LoadingActivity.prefs.logInStates = "false"
-            val intent = Intent(applicationContext,LoadingActivity::class.java)
+            prefs.logInStates = "false"
+            val intent = Intent(applicationContext, LoadingActivity::class.java)
             startActivity(intent)
             finish()
         }
 
         dbup.setOnClickListener{
-            BestDisease_tv.setText(rd.getBestDieases(_do)[0])
+            Model.MySharedPrefs(applicationContext).position = "rand"
         }
-        setScreen()
+
+
+        tabLayout.getTabAt(0)?.setIcon(R.drawable.search_icon)
+        tabLayout.getTabAt(1)?.setIcon(R.drawable.issue_icon)
+        tabLayout.getTabAt(2)?.setIcon(R.drawable.home_icon)
+        tabLayout.getTabAt(3)?.setIcon(R.drawable.world_icon)
+        tabLayout.getTabAt(4)?.setIcon(R.drawable.etc_icon)
+        tabLayout.selectTab(tabLayout.getTabAt(2))
+
+        tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                if (tab != null) {
+                    ViewModel.tabSelect(tab.position, supportFragmentManager)
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                if (tab != null) {
+                    ViewModel.tabUnselect(supportFragmentManager)
+                }
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+
+            }
+        })
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        rd.readData()
+        setScreen()
+    }
+
+
+    @SuppressLint("SetTextI18n")
     private fun setScreen() {
         GlobalScope.launch {
-            var done = false
-            while(!done){
-                if(ReadDB.finish) {
-                    val read = object : ValueEventListener {
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                            val post = snapshot.child("lastPosition").value.toString()
-                            location_tv.text = post
-                        }
 
-                        override fun onCancelled(error: DatabaseError) {
-                            TODO("Not yet implemented")
-                        }
-                    }
-                    db.child("users").child(LoadingActivity.prefs.userId!!).addListenerForSingleValueEvent(read)
-
+            while(true){
+                if(Model.dataReadFinish) {
                     runOnUiThread {
-                        BestDisease_tv.text = (rd.getBestDieases(_do)[0])
-                        patientcnt_tv.text = rd.getBestDieases(_do)[1]
+                        BestDisease_tv.text = rd.getBestDieases(_do)[0]
+                        patientcnt_tv.text = "현재 감염자 수 : ${rd.getBestDieases(_do)[1]}"
+                        faces_iv.setImageResource(ViewModel.setColor(rd.getBestDieases(_do)[1].toInt(), BestDisease_tv))
+
+                        location_tv.setBackgroundColor(ViewModel.backgroundColor)
+                        location_tv.text = ViewModel.getPosition()
+
+                        current_tv.setBackgroundColor(ViewModel.backgroundColor)
+                        toolbar.setBackgroundColor(ViewModel.backgroundColor)
+
                         Human2_tv.text =rd.getSecondDieases(_do)[0]
+                        ViewModel.setColor(rd.getSecondDieases(_do)[1].toInt(), Human2_tv)
+
                         Human3_tv.text =rd.getThirdDieases(_do)[0]
+                        ViewModel.setColor(rd.getThirdDieases(_do)[1].toInt(), Human3_tv)
                     }
-                    done = true
-
-
+                    break
                 }
                 delay(100)
             }

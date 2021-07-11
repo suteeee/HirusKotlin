@@ -19,6 +19,9 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import com.google.firebase.database.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /*
 주기적으로 웹 크롤링
@@ -28,74 +31,34 @@ import com.google.firebase.database.*
 class BackgroundService:Service(){
 
     lateinit var context:Context
-    lateinit var db: DatabaseReference
-    var latitude :Double= 0.0
-    var longitude :Double= 0.0
-    lateinit var geocoder:Geocoder
-    var dbReadingDone = false
-    lateinit var prefs:MySharedPrefs
+    lateinit var prefs:Model.MySharedPrefs
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
     private fun locationSearch() {
-        val lm = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        val mLocationListener = LocationListener {
-            val gpsTrackerService = GpsTrackerService(context)
-            latitude = gpsTrackerService.latitude
-            longitude = gpsTrackerService.longitude
-            geocoder = Geocoder(context)
-
-            var list :List<Address>  = geocoder.getFromLocation(latitude, longitude, 10)
-
-            val addr = list.get(0).toString().split(" ")
-            val userId = prefs.userId
-
-            var newStr = addr[1] + " " + addr[2]
-            prefs.position = newStr
-
-
-            val read = object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val post = snapshot.child("lastPosition").value.toString() // 로그인할때 등록된 이름이 있는지 확인
-                    Log.d("new", newStr)
-                    Log.d("post", post)
-                    if(post != newStr){
-                        Log.d("sdfhgs", "different")
-                        //NOTIFICATION
-                        noti()
-                    }
-                    db.child("users").child(userId!!).child("lastPosition").setValue("${addr[1]} ${addr[2]}")
+        GlobalScope.launch {
+            while(true){
+                Model.MyLocation().locationSearch(context)
+                if(Model.backNoti) {
+                    noti()
+                    Model.backNoti = false
                 }
-                override fun onCancelled(error: DatabaseError) {}
+                delay(1000)
             }
-            db.child("users").child(userId!!).addListenerForSingleValueEvent(read)
         }
-
-        if (ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED) {
-            return
-        }
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 1f, mLocationListener)
-        lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 100, 1f, mLocationListener)
     }
 
     override fun onCreate() {
         super.onCreate()
-        Log.d("Bs", "created")
+
         context = applicationContext
-        db = FirebaseDatabase.getInstance().reference
-        prefs = MySharedPrefs(applicationContext)
+        prefs = Model.MySharedPrefs(context)
         locationSearch()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d("bs", "startCom")
         super.onStartCommand(intent, flags, startId)
         return START_STICKY
     }
