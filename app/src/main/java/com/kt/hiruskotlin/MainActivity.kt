@@ -2,8 +2,6 @@ package com.kt.hiruskotlin
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.location.Address
-import android.location.Geocoder
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.tabs.TabLayout
@@ -58,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (tab != null) {
-                    ViewModel.tabSelect(tab.position, supportFragmentManager)
+                    ViewModel.tabSelect(tab.position, supportFragmentManager,toolbar)
                 }
             }
 
@@ -94,7 +92,7 @@ class MainActivity : AppCompatActivity() {
                         faces_iv.setImageResource(ViewModel.setColor(rd.getBestDieases(_do)[1].toInt(), BestDisease_tv))
 
                         location_tv.setBackgroundColor(ViewModel.backgroundColor)
-                        location_tv.text = ViewModel.getPosition()
+                        location_tv.text = ViewModel.getPosition(applicationContext)
 
                         current_tv.setBackgroundColor(ViewModel.backgroundColor)
                         toolbar.setBackgroundColor(ViewModel.backgroundColor)

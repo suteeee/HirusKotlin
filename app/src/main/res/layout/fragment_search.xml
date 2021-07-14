@@ -11,7 +11,7 @@
     tools:context="SearchFragment">
 
     <SearchView
-        android:id="@+id/searchView"
+        android:id="@+id/searchView_sv"
         android:layout_width="275dp"
         android:layout_height="65dp"
         android:layout_gravity="center"
@@ -20,7 +20,7 @@
         android:gravity="center" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/webAdd"
+        android:id="@+id/webAdd_lt"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

@@ -1,14 +1,15 @@
 package com.kt.hiruskotlin
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
-import android.util.Log
+import android.widget.SearchView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.firebase.database.FirebaseDatabase
-import android.content.Intent
-import android.app.Activity
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 object ViewModel {
@@ -16,16 +17,18 @@ object ViewModel {
     var backgroundColor =0
     val db = FirebaseDatabase.getInstance().reference
 
-    fun tabSelect(id: Int, fm: FragmentManager) {
+    fun tabSelect(id: Int, fm: FragmentManager, toolbar: androidx.appcompat.widget.Toolbar) {
 
         when(id){
-            0->{
+            0 -> {
                 selectedFragment = SearchFragment()
             }
-            1->{}
+            1 -> {
+                selectedFragment = HotissueFragment()
+            }
 
         }
-        if (selectedFragment != null) fm.beginTransaction().replace(R.id.layout,selectedFragment!!).commit()
+        if (selectedFragment != null) fm.beginTransaction().replace(R.id.layout, selectedFragment!!).commit()
     }
 
     fun tabUnselect(fm: FragmentManager) {
@@ -62,18 +65,47 @@ object ViewModel {
 
     fun logIn(userId: String, passWord: String, context: Context) {
         val m = Model.ReadDB(LoadingActivity.context)
-        m.readUserData(userId,passWord,context)
+        m.readUserData(userId, passWord, context)
 
     }
 
-    fun getPosition() :String{
-        return Model.prefs.position!!
+    fun getPosition(context: Context) :String{
+        return Model.MySharedPrefs(context).position!!
     }
 
-    fun startApp(intent: Intent, backGroundIntent: Intent,context: Context){
+    fun startApp(intent: Intent, backGroundIntent: Intent, context: Context){
         val bt = BackgroundThread(LoadingActivity.context)
         bt.start()
         context.startService(backGroundIntent)
+    }
+
+    fun search(searchView: SearchView, code:Int,fm: FragmentManager,id: Int) {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                val web = WebFragment(code)
+                if (query != null) {
+                    web.urlCode = query
+                }
+                fm.beginTransaction().replace(id, web).commit()
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+        })
+    }
+
+    fun getCurrentTime():String {
+        var i = 0
+        val cur = System.currentTimeMillis()
+        val mCur = Date(cur)
+        val simpleDateFormat  = SimpleDateFormat("MM월 dd일 hh시 mm분 기준")
+        return simpleDateFormat.format(mCur)
+    }
+
+    fun getWebSite(context: Context){
+        Model.getWebSite(context)
     }
 
 }

@@ -13,14 +13,16 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.IBinder
 import android.util.Log
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import org.jsoup.Jsoup
 
 object Model{
-    val prefs = MySharedPrefs(LoadingActivity.context)
-
     var dataReadFinish = false
     var LogInFinish = false
 
@@ -28,6 +30,8 @@ object Model{
     var addr1 = ""
     var addr2 = ""
     var addr3 = ""
+
+    var readIssue = false
 
     class ReadDB(context: Context)
     {
@@ -153,10 +157,10 @@ object Model{
         }
 
         fun readUserData(userId:String, passWord:String,context: Context) {
+            val prefs = MySharedPrefs(context)
             class User {
                 val userId = userId
                 val passWord = passWord
-                val lastPosition = ""
             }
             val user = User()
 
@@ -228,7 +232,7 @@ object Model{
         lateinit var geocoder: Geocoder
 
         fun locationSearch(context: Context) {
-
+            val prefs = MySharedPrefs(context)
             val gpsTrackerService = GpsTrackerService(context)
             latitude = gpsTrackerService.latitude
             longitude = gpsTrackerService.longitude
@@ -248,6 +252,26 @@ object Model{
             }
 
             prefs.position = newStr
+        }
+    }
+
+
+    var issueKeyword  = List<String>(10){""}
+    fun getWebSite(context: Context){
+
+        val pDialog = ProgressDialog(context)
+        pDialog.setCancelable(false)
+        pDialog.setMessage("데이터를 불러오는 중입니다.")
+        pDialog.show()
+
+        GlobalScope.launch {
+            val url = "https://www.kdca.go.kr/search/search.es?mid=a20101000000"
+            val doc = Jsoup.connect(url).get()
+            val title = doc.select("article.box_keyword")
+
+            issueKeyword = title.text().split(" ")
+            readIssue = true
+            pDialog.dismiss()
         }
     }
 
