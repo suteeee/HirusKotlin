@@ -52,7 +52,7 @@ class BackgroundService:Service(){
 
     override fun onCreate() {
         super.onCreate()
-
+        Log.d("service","start")
         context = applicationContext
         prefs = Model.MySharedPrefs(context)
         locationSearch()

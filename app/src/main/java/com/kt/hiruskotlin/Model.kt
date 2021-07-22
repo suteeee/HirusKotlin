@@ -156,6 +156,10 @@ object Model{
             return temp
         }
 
+        fun getConfirmedData(){
+
+        }
+
         fun readUserData(userId:String, passWord:String,context: Context) {
             val prefs = MySharedPrefs(context)
             class User {
@@ -238,20 +242,33 @@ object Model{
             longitude = gpsTrackerService.longitude
             geocoder = Geocoder(context)
 
-            var list :List<Address>  = geocoder.getFromLocation(latitude, longitude, 10)
-            val addr = list.get(0).toString().split(" ")
+            try {
+                while(true){
+                    if(latitude != 0.0 && longitude != 0.0) break
+                        latitude = gpsTrackerService.latitude
+                        longitude = gpsTrackerService.longitude
 
-            addr1 = addr[1]
-            addr2 = addr[2]
-            addr3 = addr[3]
+                }
 
-            var newStr = addr[1] + " " + addr[2]
 
-            if(prefs.position != newStr){
-                backNoti = true
+                var list: List<Address> = geocoder.getFromLocation(latitude, longitude, 10)
+                val addr = list.get(0).toString().split(" ")
+
+                addr1 = addr[1]
+                addr2 = addr[2]
+                addr3 = addr[3]
+
+                var newStr = addr[1] + " " + addr[2]
+
+                if (prefs.position != newStr) {
+                    backNoti = true
+                }
+                Log.d(newStr,"Model")
+                prefs.position = newStr
             }
-
-            prefs.position = newStr
+            catch(e:ArrayIndexOutOfBoundsException){
+                prefs.position = "알수 없음"
+            }
         }
     }
 

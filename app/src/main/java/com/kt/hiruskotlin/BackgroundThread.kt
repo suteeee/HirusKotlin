@@ -31,6 +31,7 @@ class BackgroundThread : Thread {
 
     constructor(context: Context) {
         this.context = context
+        backgroundService = BackgroundService()
     }
 
 
@@ -55,8 +56,6 @@ class BackgroundThread : Thread {
     }
 
     override fun run()= runBlocking<Unit> {
-        backgroundService = BackgroundService()
-
         val setServiceState = GlobalScope.async {
             while(true){
                 Log.d("Thread", "run");

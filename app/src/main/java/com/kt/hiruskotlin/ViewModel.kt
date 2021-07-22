@@ -5,17 +5,23 @@ import android.content.Intent
 import android.graphics.Color
 import android.widget.SearchView
 import android.widget.TextView
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.firebase.database.FirebaseDatabase
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.jar.Manifest
 
 
 object ViewModel {
     var selectedFragment: Fragment? = null
     var backgroundColor =0
     val db = FirebaseDatabase.getInstance().reference
+
+    fun getConfirmedData(context: Context) {
+        Model.ReadDB(context).getConfirmedData()
+    }
 
     fun tabSelect(id: Int, fm: FragmentManager, toolbar: androidx.appcompat.widget.Toolbar) {
 
@@ -73,10 +79,9 @@ object ViewModel {
         return Model.MySharedPrefs(context).position!!
     }
 
-    fun startApp(intent: Intent, backGroundIntent: Intent, context: Context){
-        val bt = BackgroundThread(LoadingActivity.context)
+    fun locationStart(context: Context) {
+        val bt = BackgroundThread(context)
         bt.start()
-        context.startService(backGroundIntent)
     }
 
     fun search(searchView: SearchView, code:Int,fm: FragmentManager,id: Int) {

@@ -9,7 +9,9 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import androidx.core.app.ActivityCompat
 import androidx.core.content.getSystemService
 
@@ -19,7 +21,7 @@ class GpsTrackerService : Service, LocationListener{
     var latitude = 0.0
     var longitude = 0.0
 
-    private val MIN_DISTANCE_CHANGE_FOR_UPDATES: Long = 10
+    private val MIN_DISTANCE_CHANGE_FOR_UPDATES: Float = 10F
     private val MIN_TIME_BW_UPDATES = (1000 * 60 * 1).toLong()
     lateinit var locationManager: LocationManager
 
@@ -30,10 +32,15 @@ class GpsTrackerService : Service, LocationListener{
 
     @SuppressLint("MissingPermission")
     fun getLocation() {
-        locationManager = context.getSystemService(LOCATION_SERVICE) as LocationManager
-        location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)!!
-        latitude = location.latitude
-        longitude = location.longitude
+        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed({
+            locationManager = context.getSystemService(LOCATION_SERVICE) as LocationManager
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this)
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this)
+            location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)!!
+            latitude = location.latitude
+            longitude = location.longitude
+        },0)
 
     }
 
@@ -42,6 +49,7 @@ class GpsTrackerService : Service, LocationListener{
     }
 
     override fun onLocationChanged(location: Location) {
-        TODO("Not yet implemented")
+        latitude = location.latitude
+        longitude = location.longitude
     }
 }
