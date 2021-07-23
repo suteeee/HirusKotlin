@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.material.snackbar.Snackbar
@@ -31,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         Manifest.permission.ACCESS_BACKGROUND_LOCATION
     )
 
-    fun checkPermissions():Boolean {
+    private fun checkPermissions():Boolean {
         return (ActivityCompat.checkSelfPermission(this,REQUIRED_PERMISSIONS[0]) == PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this,REQUIRED_PERMISSIONS[1]) == PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this,REQUIRED_PERMISSIONS[2]) == PackageManager.PERMISSION_GRANTED)

@@ -1,27 +1,21 @@
 package com.kt.hiruskotlin
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.widget.SearchView
 import android.widget.TextView
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.firebase.database.FirebaseDatabase
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.jar.Manifest
+import kotlin.collections.ArrayList
 
 
 object ViewModel {
     var selectedFragment: Fragment? = null
     var backgroundColor =0
     val db = FirebaseDatabase.getInstance().reference
-
-    fun getConfirmedData(context: Context) {
-        Model.ReadDB(context).getConfirmedData()
-    }
 
     fun tabSelect(id: Int, fm: FragmentManager, toolbar: androidx.appcompat.widget.Toolbar) {
 
@@ -31,6 +25,9 @@ object ViewModel {
             }
             1 -> {
                 selectedFragment = HotissueFragment()
+            }
+            3->{
+                selectedFragment = WorldMapFragment()
             }
 
         }
@@ -78,6 +75,11 @@ object ViewModel {
     fun getPosition(context: Context) :String{
         return Model.MySharedPrefs(context).position!!
     }
+
+    fun getConfirmedData(context: Context, confirmedArr: ArrayList<Int>, nameArr: ArrayList<String>){
+        Model.ReadDB(context).getConfirmedData(confirmedArr,nameArr)
+    }
+
 
     fun locationStart(context: Context) {
         val bt = BackgroundThread(context)

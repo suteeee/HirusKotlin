@@ -1,23 +1,13 @@
 package com.kt.hiruskotlin
 
-import android.Manifest
 import android.app.ProgressDialog
-import android.app.Service
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
-import android.location.LocationListener
-import android.location.LocationManager
-import android.os.IBinder
 import android.util.Log
-import android.widget.TextView
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import com.google.firebase.database.*
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jsoup.Jsoup
@@ -25,6 +15,7 @@ import org.jsoup.Jsoup
 object Model{
     var dataReadFinish = false
     var LogInFinish = false
+    var readComfirmFinish = false
 
     var backNoti = false
     var addr1 = ""
@@ -47,7 +38,7 @@ object Model{
             pDialog.setMessage("데이터를 불러오는 중입니다.")
             pDialog.show()
 
-            repeat(17){
+            repeat(18){
                 arr.add( ArrayList<ArrayList<String>>() )
             }
 
@@ -56,7 +47,7 @@ object Model{
                     var i = 0
                     for (snap in snapshot.children) {
 
-                        if(snap.key == "users") break
+                        if(snap.key == "users" || snap.key == "corona") break
 
                         for(subSnap in snap.children){
                             if(subSnap.key != "지역"){
@@ -156,8 +147,46 @@ object Model{
             return temp
         }
 
-        fun getConfirmedData(){
+        fun getConfirmedData(confirmedArr: ArrayList<Int>, nameArr: ArrayList<String>) : ArrayList<Int>{
+            readComfirmFinish = false
+            val countriCode =
+                arrayOf("CA","US","GL","MX","GT","HD","ELS","BLZ","CR","PNM",
+                    "PNM","CB","VZ","ECD","PR","BZ","BV","PRG","CL","AG",
+                    "UG","GA","SN","FGA","FOL","RS","IS","FL","SW", "NW",
+                    "KZH","MONG","CN","NK","KR","ID","NP","BT","BGL", "MY",
+                    "TAI","RAOS","BIET","MAL","IDN","PAP","AUS","NWZ","SOL","VNT",
+                    "NVK","PIZ","KRG","TZK","UZB","TRK","IRN","AFG","PAQ", "IRK",
+                    "SUA","YEM","OMAN","AEU","SIR","TUR","GRG","AZB", "ARM","YRD",
+                    "ISR","LBN","IZT","RIB","SDN","CHD","NZR","AZL", "MRC", "SSHR",
+                    "MRT","MALI","SNG","GMB","BRC","CRTB","GINI","GNBS", "SRR", "RAIB",
+                    "GANA","TOGO","VNG","NIZ","CMR","CAR","SSD","ETO", "SMR", "KNYA",
+                    "UGD","CNGR","CNG","CGN","GBN","AGL","ZBA","TZN", "RWD", "BRD",
+                    "MLW","MZB","NCG","ZBW","BTW","NMB","SAR","RST","EST", "MDG", "UCR",
+                    "VLR","FLD","GER","FRNC","SPN","ITA","SWS","AST", "CHK", "SLV",
+                    "HGR","RMN","BGR","GRC","SRV","SLVN","CRT","BSN", "CSB", "MTN",
+                    "ABN","NMK","RTN","RTB","ESTN","LSB","VGE","NDL", "DMK", "PRT",
+                    "MDV","ENG","ISL")
 
+            val read = object : ValueEventListener{
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    snapshot.children.forEach {
+                        val post = it
+                        val d = post.key.toString()
+                        val index = countriCode.indexOf(d)
+
+                        confirmedArr[index] =  post.children.elementAt(0).value.toString().toInt()
+                        nameArr[index] =  post.children.elementAt(0).key.toString()
+                    }
+                    readComfirmFinish = true
+                }
+
+            }
+            db.child("corona").addListenerForSingleValueEvent(read)
+            return confirmedArr
         }
 
         fun readUserData(userId:String, passWord:String,context: Context) {
