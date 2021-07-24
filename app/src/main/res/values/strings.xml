@@ -2,4 +2,5 @@
     <string name="app_name">HirusKotlin</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name = "get_Current_time">MM월 dd일 hh시 mm분 기준</string>
 </resources>

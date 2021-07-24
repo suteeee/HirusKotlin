@@ -8,6 +8,7 @@ import android.location.Geocoder
 import android.util.Log
 import android.widget.Toast
 import com.google.firebase.database.*
+import com.kt.hiruskotlin.ViewModel.MainActivityViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jsoup.Jsoup
@@ -206,7 +207,7 @@ object Model{
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val post = snapshot.child(userId) // 로그인할때 등록된 이름이 있는지 확인
                     if (post.value == null) { //등록 내역이 없다면
-                        ViewModel.db.child("users").child(userId).setValue(user)
+                        MainActivityViewModel().db.child("users").child(userId).setValue(user)
                         LogInFinish = true
                     } else {
                         val check = post.child("passWord").value.toString()
@@ -224,7 +225,7 @@ object Model{
                 override fun onCancelled(error: DatabaseError) {}
             }
             prefs.userId = userId
-            ViewModel.db.child("users").addValueEventListener(read)
+            MainActivityViewModel().db.child("users").addValueEventListener(read)
 
         }
 

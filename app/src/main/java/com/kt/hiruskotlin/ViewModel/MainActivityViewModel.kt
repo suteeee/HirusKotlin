@@ -1,18 +1,14 @@
-package com.kt.hiruskotlin
+package com.kt.hiruskotlin.ViewModel
 
 import android.content.Context
 import android.graphics.Color
-import android.widget.SearchView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.firebase.database.FirebaseDatabase
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.collections.ArrayList
+import com.kt.hiruskotlin.*
 
-
-object ViewModel {
+class MainActivityViewModel {
     var selectedFragment: Fragment? = null
     var backgroundColor =0
     val db = FirebaseDatabase.getInstance().reference
@@ -28,6 +24,9 @@ object ViewModel {
             }
             3->{
                 selectedFragment = WorldMapFragment()
+            }
+            4->{
+                selectedFragment = UserFragment()
             }
 
         }
@@ -66,53 +65,14 @@ object ViewModel {
         return faceId
     }
 
-    fun logIn(userId: String, passWord: String, context: Context) {
-        val m = Model.ReadDB(LoadingActivity.context)
-        m.readUserData(userId, passWord, context)
-
-    }
-
     fun getPosition(context: Context) :String{
         return Model.MySharedPrefs(context).position!!
     }
-
-    fun getConfirmedData(context: Context, confirmedArr: ArrayList<Int>, nameArr: ArrayList<String>){
-        Model.ReadDB(context).getConfirmedData(confirmedArr,nameArr)
-    }
-
 
     fun locationStart(context: Context) {
         val bt = BackgroundThread(context)
         bt.start()
     }
 
-    fun search(searchView: SearchView, code:Int,fm: FragmentManager,id: Int) {
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                val web = WebFragment(code)
-                if (query != null) {
-                    web.urlCode = query
-                }
-                fm.beginTransaction().replace(id, web).commit()
-                return true
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                return false
-            }
-        })
-    }
-
-    fun getCurrentTime():String {
-        var i = 0
-        val cur = System.currentTimeMillis()
-        val mCur = Date(cur)
-        val simpleDateFormat  = SimpleDateFormat("MM월 dd일 hh시 mm분 기준")
-        return simpleDateFormat.format(mCur)
-    }
-
-    fun getWebSite(context: Context){
-        Model.getWebSite(context)
-    }
 
 }

@@ -5,11 +5,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.fragment_search.*
+import com.kt.hiruskotlin.ViewModel.SearchViewModel
 import kotlinx.android.synthetic.main.fragment_search.view.*
 
 class SearchFragment : Fragment() {
     private val URL_FLAG = 0
+    val viewModel = SearchViewModel()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -18,7 +19,7 @@ class SearchFragment : Fragment() {
         val search = rootView.searchView_sv
 
         if (fm != null) {
-            ViewModel.search(search,URL_FLAG, fm, R.id.webAdd_lt)
+            viewModel.search(search,URL_FLAG, fm, R.id.webAdd_lt)
         }
 
         return rootView

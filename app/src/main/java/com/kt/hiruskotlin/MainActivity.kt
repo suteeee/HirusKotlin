@@ -6,16 +6,18 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
-import android.widget.Toolbar
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.firebase.database.*
+import com.kt.hiruskotlin.ViewModel.MainActivityViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -26,6 +28,9 @@ class MainActivity : AppCompatActivity() {
     lateinit var rd : Model.ReadDB
     lateinit var _do : String
 
+    val viewModel = MainActivityViewModel()
+
+    @RequiresApi(Build.VERSION_CODES.Q)
     var REQUIRED_PERMISSIONS = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -47,9 +52,7 @@ class MainActivity : AppCompatActivity() {
                 if(it == PackageManager.PERMISSION_DENIED) check = false
             }
 
-            if(check){
-
-            }
+            if(check){ }
             else{
                 val snackbar = Snackbar.make(container, "위치권한 설정 요망", Snackbar.LENGTH_INDEFINITE)
                     .setAction("설정하기"){
@@ -108,13 +111,13 @@ class MainActivity : AppCompatActivity() {
         tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (tab != null) {
-                    ViewModel.tabSelect(tab.position, supportFragmentManager,toolbar)
+                    viewModel.tabSelect(tab.position, supportFragmentManager,toolbar)
                 }
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
                 if (tab != null) {
-                    ViewModel.tabUnselect(supportFragmentManager)
+                    viewModel.tabUnselect(supportFragmentManager)
                 }
             }
 
@@ -128,7 +131,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         if(checkPermissions()){
-            ViewModel.locationStart(applicationContext)
+            viewModel.locationStart(applicationContext)
             rd.readData()
 
             setScreen()
@@ -152,19 +155,19 @@ class MainActivity : AppCompatActivity() {
                         Log.d(_do,"dsf")
                         BestDisease_tv.text = rd.getBestDieases(_do)[0]
                         patientcnt_tv.text = "현재 감염자 수 : ${rd.getBestDieases(_do)[1]}"
-                        faces_iv.setImageResource(ViewModel.setColor(rd.getBestDieases(_do)[1].toInt(), BestDisease_tv))
+                        faces_iv.setImageResource(viewModel.setColor(rd.getBestDieases(_do)[1].toInt(), BestDisease_tv))
 
-                        location_tv.setBackgroundColor(ViewModel.backgroundColor)
-                        location_tv.text = ViewModel.getPosition(applicationContext)
+                        location_tv.setBackgroundColor(viewModel.backgroundColor)
+                        location_tv.text = viewModel.getPosition(applicationContext)
 
-                        current_tv.setBackgroundColor(ViewModel.backgroundColor)
-                        toolbar.setBackgroundColor(ViewModel.backgroundColor)
+                        current_tv.setBackgroundColor(viewModel.backgroundColor)
+                        toolbar.setBackgroundColor(viewModel.backgroundColor)
 
                         Human2_tv.text =rd.getSecondDieases(_do)[0]
-                        ViewModel.setColor(rd.getSecondDieases(_do)[1].toInt(), Human2_tv)
+                        viewModel.setColor(rd.getSecondDieases(_do)[1].toInt(), Human2_tv)
 
                         Human3_tv.text =rd.getThirdDieases(_do)[0]
-                        ViewModel.setColor(rd.getThirdDieases(_do)[1].toInt(), Human3_tv)
+                        viewModel.setColor(rd.getThirdDieases(_do)[1].toInt(), Human3_tv)
                     }
                     break
                 }

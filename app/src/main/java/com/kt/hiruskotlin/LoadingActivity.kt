@@ -1,16 +1,13 @@
 package com.kt.hiruskotlin
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import com.google.firebase.database.*
+import com.kt.hiruskotlin.ViewModel.LoadingActivityViewModel
 import kotlinx.android.synthetic.main.activity_loding.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -22,6 +19,8 @@ class LoadingActivity : AppCompatActivity() {
         @SuppressLint("StaticFieldLeak")
         lateinit var context : Context
     }
+
+    val viewModel = LoadingActivityViewModel()
 
     lateinit var db:DatabaseReference
 
@@ -59,7 +58,7 @@ class LoadingActivity : AppCompatActivity() {
     */
 
     private fun logIn(userId: String, passWord: String) {
-        ViewModel.logIn(userId,passWord, this)
+        viewModel.logIn(userId,passWord, this)
         GlobalScope.launch {
             while(true){
                 if(Model.LogInFinish) {

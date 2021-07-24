@@ -13,6 +13,7 @@ import android.view.*
 import android.widget.HorizontalScrollView
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
+import com.kt.hiruskotlin.ViewModel.WorldMapViewModel
 import kotlinx.android.synthetic.main.fragment_world_map.*
 import kotlinx.android.synthetic.main.fragment_world_map.view.*
 import kotlinx.coroutines.GlobalScope
@@ -34,16 +35,16 @@ class WorldMapFragment : Fragment() {
 
         var scrollView : HorizontalScrollView? = null
     }
-       lateinit var scaleGestureDetector: ScaleGestureDetector
 
+    val viewModel = WorldMapViewModel()
+    lateinit var scaleGestureDetector: ScaleGestureDetector
 
-    val contriesCnt =Array(154){}
     val confirmedArr = ArrayList<Int>()
     val nameArr = ArrayList<String>()
     lateinit var countryTouchListener:CountryTouchListener
 
     fun getData(context: Context, confirmedArr: ArrayList<Int>, nameArr: ArrayList<String>) {
-        ViewModel.getConfirmedData(context, confirmedArr, nameArr)
+        viewModel.getConfirmedData(context, confirmedArr, nameArr)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -101,7 +102,6 @@ class WorldMapFragment : Fragment() {
                 activity?.runOnUiThread{
                    for (i in contries.indices) {
                         val it = contries[i]
-                       // it.isClickable = true
                         it.setOnTouchListener(countryTouchListener)
                        var colorCode = ""
 
