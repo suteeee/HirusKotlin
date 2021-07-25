@@ -10,14 +10,22 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.databinding.BindingAdapter
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.firebase.database.*
-import com.kt.hiruskotlin.ViewModel.MainActivityViewModel
+import com.kt.hiruskotlin.databinding.ActivityMainBinding
+import com.kt.hiruskotlin.model.MySharedPrefsModel
+import com.kt.hiruskotlin.model.ReadDBModel
+import com.kt.hiruskotlin.viewModel.MainActivityViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -25,10 +33,11 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     lateinit var db:DatabaseReference
-    lateinit var rd : Model.ReadDB
+    lateinit var rd : ReadDBModel
     lateinit var _do : String
+    lateinit var binding:ActivityMainBinding
 
-    val viewModel = MainActivityViewModel()
+    lateinit var viewModel:MainActivityViewModel
 
     @RequiresApi(Build.VERSION_CODES.Q)
     var REQUIRED_PERMISSIONS = arrayOf(
@@ -75,7 +84,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
+        binding = DataBindingUtil.setContentView(this,R.layout.activity_main)
+        binding.apply {
+            lifecycleOwner = this@MainActivity
+            view = viewModel
+            invalidateAll()
+        }
+
 
         if(!checkPermissions()){
             ActivityCompat.requestPermissions(this,REQUIRED_PERMISSIONS,100)
@@ -83,8 +99,8 @@ class MainActivity : AppCompatActivity() {
 
 
         db = FirebaseDatabase.getInstance().reference
-        val prefs = Model.MySharedPrefs(applicationContext)
-        rd = Model.ReadDB(this)
+        val prefs = MySharedPrefsModel(applicationContext)
+        rd = ReadDBModel(this)
 
         able.setOnClickListener {
             prefs.threadStates = "사용함"
@@ -92,6 +108,7 @@ class MainActivity : AppCompatActivity() {
 
         disable.setOnClickListener{
             prefs.threadStates = "사용 안함"
+            viewModel.bestDieases.value = "엄준식"
         }
 
         b3.setOnClickListener{
@@ -126,6 +143,8 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+
+
     }
 
     override fun onResume() {
@@ -138,43 +157,45 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     @SuppressLint("SetTextI18n")
     private fun setScreen() {
-        GlobalScope.launch {
+        val prefs = MySharedPrefsModel(applicationContext)
+            GlobalScope.launch {
 
-            while(true){
-                if(Model.dataReadFinish) {
+                while(true){
+                    if(ReadDBModel.dataReadFinish){
+                        _do = prefs.position.toString().split(" ")[0]
 
-                    runOnUiThread {
-                        _do = Model.MySharedPrefs(applicationContext).position.toString().split(" ")[0]
                         while (true){
                             if(_do != null && _do != "rand") break
-                            _do = Model.MySharedPrefs(applicationContext).position.toString().split(" ")[0]
+                            _do = prefs.position.toString().split(" ")[0]
                         }
-                        Log.d(_do,"dsf")
-                        BestDisease_tv.text = rd.getBestDieases(_do)[0]
-                        patientcnt_tv.text = "현재 감염자 수 : ${rd.getBestDieases(_do)[1]}"
-                        faces_iv.setImageResource(viewModel.setColor(rd.getBestDieases(_do)[1].toInt(), BestDisease_tv))
 
-                        location_tv.setBackgroundColor(viewModel.backgroundColor)
-                        location_tv.text = viewModel.getPosition(applicationContext)
+                        viewModel.bestDieases.postValue(rd.getBestDieases(_do)[0])
+                        viewModel.patientCnt.postValue(rd.getBestDieases(_do)[1])
+                        viewModel.position.postValue(prefs.position)
+                        viewModel.setImage(rd.getBestDieases(_do)[1].toInt())
 
-                        current_tv.setBackgroundColor(viewModel.backgroundColor)
-                        toolbar.setBackgroundColor(viewModel.backgroundColor)
+                        viewModel.secondDieases.postValue((rd.getSecondDieases(_do)[0]))
+                        viewModel.thirdDieases.postValue((rd.getThirdDieases(_do)[0]))
 
-                        Human2_tv.text =rd.getSecondDieases(_do)[0]
-                        viewModel.setColor(rd.getSecondDieases(_do)[1].toInt(), Human2_tv)
+                        runOnUiThread {
+                            viewModel.setColor(rd.getBestDieases(_do)[1].toInt(),location_tv)
+                            BestDisease_tv.setBackgroundColor(viewModel.backgroundColor)
+                            current_tv.setBackgroundColor(viewModel.backgroundColor)
+                            toolbar.setBackgroundColor(viewModel.backgroundColor)
+                            faces_iv.setImageResource(viewModel.faceId)
 
-                        Human3_tv.text =rd.getThirdDieases(_do)[0]
-                        viewModel.setColor(rd.getThirdDieases(_do)[1].toInt(), Human3_tv)
+                            viewModel.setColor(rd.getSecondDieases(_do)[1].toInt(), Human2_tv)
+                            viewModel.setColor(rd.getThirdDieases(_do)[1].toInt(), Human3_tv)
+                        }
+                        break
                     }
-                    break
+
                 }
                 delay(100)
             }
-
-        }
+        binding.invalidateAll()
     }
 
 }

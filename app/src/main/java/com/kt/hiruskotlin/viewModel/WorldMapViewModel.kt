@@ -1,11 +1,11 @@
-package com.kt.hiruskotlin.ViewModel
+package com.kt.hiruskotlin.viewModel
 
 import android.content.Context
-import com.kt.hiruskotlin.Model
+import com.kt.hiruskotlin.model.ReadDBModel
 
 class WorldMapViewModel {
     fun getConfirmedData(context: Context, confirmedArr: ArrayList<Int>, nameArr: ArrayList<String>){
-        Model.ReadDB(context).getConfirmedData(confirmedArr,nameArr)
+        ReadDBModel(context).getConfirmedData(confirmedArr,nameArr)
     }
 
 }

@@ -7,7 +7,9 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.*
-import com.kt.hiruskotlin.ViewModel.LoadingActivityViewModel
+import com.kt.hiruskotlin.model.MySharedPrefsModel
+import com.kt.hiruskotlin.model.ReadDBModel
+import com.kt.hiruskotlin.viewModel.LoadingActivityViewModel
 import kotlinx.android.synthetic.main.activity_loding.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -15,7 +17,7 @@ import kotlinx.coroutines.launch
 
 class LoadingActivity : AppCompatActivity() {
     companion object{
-        lateinit var prefs:Model.MySharedPrefs
+        lateinit var prefs:MySharedPrefsModel
         @SuppressLint("StaticFieldLeak")
         lateinit var context : Context
     }
@@ -28,7 +30,7 @@ class LoadingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_loding)
         context = applicationContext
-        prefs = Model.MySharedPrefs(context)
+        prefs = MySharedPrefsModel(context)
         db = FirebaseDatabase.getInstance().reference
     }
 
@@ -61,7 +63,7 @@ class LoadingActivity : AppCompatActivity() {
         viewModel.logIn(userId,passWord, this)
         GlobalScope.launch {
             while(true){
-                if(Model.LogInFinish) {
+                if(ReadDBModel.LogInFinish) {
                     startApp()
                     break
                 }

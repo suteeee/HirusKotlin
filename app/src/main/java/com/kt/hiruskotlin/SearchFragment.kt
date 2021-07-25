@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.kt.hiruskotlin.ViewModel.SearchViewModel
+import com.kt.hiruskotlin.viewModel.SearchViewModel
 import kotlinx.android.synthetic.main.fragment_search.view.*
 
 class SearchFragment : Fragment() {

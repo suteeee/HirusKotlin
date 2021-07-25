@@ -1,16 +1,17 @@
-package com.kt.hiruskotlin.ViewModel
+package com.kt.hiruskotlin.viewModel
 
 import android.content.Context
 import android.view.View
 import androidx.lifecycle.MutableLiveData
-import com.kt.hiruskotlin.Model
 import com.kt.hiruskotlin.R
+import com.kt.hiruskotlin.model.WebModel
 import kotlinx.android.synthetic.main.fragment_hotissue.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 class HotIssueViewModel(root : View) {
     val rootView = root
+    val model = WebModel()
 
     fun getCurrentTime():String {
         val cur = System.currentTimeMillis()
@@ -20,7 +21,7 @@ class HotIssueViewModel(root : View) {
     }
 
     fun getWebSite(context: Context){
-        Model.getWebSite(context)
+        model.getWebSite(context)
     }
 
     fun dataSet(te:Array<MutableLiveData<String>>, t:MutableLiveData<String>) {
@@ -31,8 +32,8 @@ class HotIssueViewModel(root : View) {
         getWebSite(rootView.context)
 
         while (true){
-            if(Model.readIssue){
-                val keywords = Model.issueKeyword
+            if(model.readIssue){
+                val keywords = model.issueKeyword
                 title.value = (keywords[0])
 
                 for(i in 0 until 10){

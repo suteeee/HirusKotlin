@@ -1,21 +1,10 @@
 package com.kt.hiruskotlin
 
-import android.Manifest
-import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.location.Address
-import android.location.Geocoder
-import android.location.LocationListener
-import android.location.LocationManager
-import android.preference.PreferenceManager
 import android.util.Log
-import androidx.core.app.ActivityCompat
 
-import com.google.firebase.database.DatabaseReference
-import com.kt.hiruskotlin.LoadingActivity.Companion.prefs
-import kotlinx.android.synthetic.main.activity_main.*
+import com.kt.hiruskotlin.model.MySharedPrefsModel
 import kotlinx.coroutines.*
 
 class BackgroundThread : Thread {
@@ -41,7 +30,7 @@ class BackgroundThread : Thread {
     }
 
     private fun optionCheck() {
-        val prefs = Model.MySharedPrefs(context)
+        val prefs = MySharedPrefsModel(context)
         if (prefs.threadStates == "사용 안함") {
             Log.d("SubThread", "disable")
             if(running) context.stopService(serviceIntent) //서비스 실행중일때만 종료가능

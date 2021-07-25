@@ -1,4 +1,4 @@
-package com.kt.hiruskotlin.ViewModel
+package com.kt.hiruskotlin.viewModel
 
 import android.widget.SearchView
 import androidx.fragment.app.FragmentManager

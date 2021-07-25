@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
-import com.kt.hiruskotlin.ViewModel.HotIssueViewModel
+import com.kt.hiruskotlin.viewModel.HotIssueViewModel
 import com.kt.hiruskotlin.databinding.FragmentHotissueBinding
 import kotlinx.android.synthetic.main.fragment_hotissue.*
 import kotlinx.android.synthetic.main.fragment_hotissue.view.*

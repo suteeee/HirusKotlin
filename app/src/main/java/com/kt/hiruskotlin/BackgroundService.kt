@@ -1,24 +1,18 @@
 package com.kt.hiruskotlin
 
-import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
-import android.location.Address
-import android.location.Geocoder
-import android.location.LocationListener
-import android.location.LocationManager
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
-import com.google.firebase.database.*
+import com.kt.hiruskotlin.model.LocationModel
+import com.kt.hiruskotlin.model.MySharedPrefsModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -31,7 +25,8 @@ import kotlinx.coroutines.launch
 class BackgroundService:Service(){
 
     lateinit var context:Context
-    lateinit var prefs:Model.MySharedPrefs
+    lateinit var prefs:MySharedPrefsModel
+    val model = LocationModel()
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -40,10 +35,10 @@ class BackgroundService:Service(){
     private fun locationSearch() {
         GlobalScope.launch {
             while(true){
-                Model.MyLocation().locationSearch(context)
-                if(Model.backNoti) {
+                model.locationSearch(context)
+                if(model.backNoti) {
                     noti()
-                    Model.backNoti = false
+                    model.backNoti = false
                 }
                 delay(1000)
             }
@@ -54,7 +49,7 @@ class BackgroundService:Service(){
         super.onCreate()
         Log.d("service","start")
         context = applicationContext
-        prefs = Model.MySharedPrefs(context)
+        prefs = MySharedPrefsModel(context)
         locationSearch()
     }
 

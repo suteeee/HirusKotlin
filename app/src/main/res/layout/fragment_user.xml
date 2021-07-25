@@ -10,7 +10,7 @@
             type="com.kt.hiruskotlin.UserFragment" />
         <variable
             name="prefs"
-            type="com.kt.hiruskotlin.Model.MySharedPrefs" />
+            type="com.kt.hiruskotlin.model.MySharedPrefsModel" />
     </data>
 
     <LinearLayout

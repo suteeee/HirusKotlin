@@ -13,7 +13,8 @@ import android.view.*
 import android.widget.HorizontalScrollView
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
-import com.kt.hiruskotlin.ViewModel.WorldMapViewModel
+import com.kt.hiruskotlin.model.ReadDBModel
+import com.kt.hiruskotlin.viewModel.WorldMapViewModel
 import kotlinx.android.synthetic.main.fragment_world_map.*
 import kotlinx.android.synthetic.main.fragment_world_map.view.*
 import kotlinx.coroutines.GlobalScope
@@ -42,6 +43,7 @@ class WorldMapFragment : Fragment() {
     val confirmedArr = ArrayList<Int>()
     val nameArr = ArrayList<String>()
     lateinit var countryTouchListener:CountryTouchListener
+    lateinit var model:ReadDBModel
 
     fun getData(context: Context, confirmedArr: ArrayList<Int>, nameArr: ArrayList<String>) {
         viewModel.getConfirmedData(context, confirmedArr, nameArr)
@@ -50,6 +52,7 @@ class WorldMapFragment : Fragment() {
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView =inflater.inflate(R.layout.fragment_world_map,container,false)
+        model = ReadDBModel(rootView.context)
 
         scrollView = WhitemapView
         val pDialog = ProgressDialog(context)
@@ -93,7 +96,8 @@ class WorldMapFragment : Fragment() {
             GlobalScope.launch {
                 getData(rootView.context,confirmedArr,nameArr)
                 while (true) {
-                    if (Model.readComfirmFinish) {
+                    Log.d("read",ReadDBModel.readComfirmFinish.toString())
+                    if (ReadDBModel.readComfirmFinish) {
                         break
                     }
                     delay(500)
